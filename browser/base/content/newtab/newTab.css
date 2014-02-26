@@ -185,14 +185,22 @@ input[type=button] {
 }
 
 .newtab-control-pin:-moz-locale-dir(ltr),
-.newtab-control-block:-moz-locale-dir(rtl) {
+.newtab-control-block:-moz-locale-dir(rtl),
+.newtab-control-sponsored:-moz-locale-dir(rtl){
   left: 4px;
 }
 
+.newtab-control-sponsored:-moz-locale-dir(ltr),
 .newtab-control-block:-moz-locale-dir(ltr),
 .newtab-control-pin:-moz-locale-dir(rtl) {
   right: 4px;
 }
+
+.newtab-control.newtab-control-sponsored {
+  top: auto;
+  bottom: 4px;
+}
+
 
 /* DRAG & DROP */
 

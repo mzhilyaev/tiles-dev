@@ -17,6 +17,18 @@
             xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             title="&newtab.pageTitle;">
 
+  <xul:panel id="thepanel" type="arrow">
+    <xul:hbox align="start">
+      <xul:vbox>
+        <xul:description value="You have 6 new messages."/>
+        <xul:hbox>
+          <xul:button label="Read Mail"/>
+          <xul:button label="New Message"/>
+        </xul:hbox>
+      </xul:vbox>
+    </xul:hbox>
+  </xul:panel>
+
   <div id="newtab-scrollbox">
 
     <div id="newtab-vertical-margin">

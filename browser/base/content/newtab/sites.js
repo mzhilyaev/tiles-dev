@@ -163,11 +163,16 @@ Site.prototype = {
     // Register drag-and-drop event handlers.
     this._node.addEventListener("dragstart", this, false);
     this._node.addEventListener("dragend", this, false);
+    this._node.addEventListener("mouseout", this, false);
     this._node.addEventListener("mouseover", this, false);
 
     let controls = this.node.querySelectorAll(".newtab-control");
     for (let i = 0; i < controls.length; i++)
       controls[i].addEventListener("click", this, false);
+
+    let sponsored = this._querySelector(".newtab-control-sponsored");
+    sponsored.addEventListener("mouseenter", this, false);
+    sponsored.addEventListener("mouseleave", this, false);
   },
 
   /**
@@ -180,22 +185,56 @@ Site.prototype = {
   },
 
   /**
+   * show the panel
+   */
+  _showPanel: function Site_showPanel(target) {
+    let panel = document.getElementById("thepanel");
+    this._panelOn = true;
+    console.log("showPabel");
+    panel.openPopup(target,"bottomleft","20","20");
+  },
+
+  /**
+   * show the panel
+   */
+  _hidePanel: function Hide_showPanel() {
+    let panel = document.getElementById("thepanel");
+    console.log("hidePabel");
+    panel.hidePopup();
+    this._panelOn = false;
+  },
+
+  /**
    * Handles all site events.
    */
   handleEvent: function Site_handleEvent(aEvent) {
     switch (aEvent.type) {
       case "click":
-        aEvent.preventDefault();
-        if (aEvent.target.classList.contains("newtab-control-block"))
-          this.block();
-        else if (this.isPinned())
-          this.unpin();
-        else
-          this.pin();
+        if (!aEvent.target.classList.contains("newtab-control-sponsored")) {
+          aEvent.preventDefault();
+          if (aEvent.target.classList.contains("newtab-control-block"))
+            this.block();
+          else if (this.isPinned())
+            this.unpin();
+          else
+            this.pin();
+        }
         break;
       case "mouseover":
-        this._node.removeEventListener("mouseover", this, false);
-        this._speculativeConnect();
+        console.log("mouseover",aEvent.target.nodeName);
+        //this._node.removeEventListener("mouseover", this, false);
+        //this._speculativeConnect();
+        break;
+      case "mouseenter":
+        console.log("mouseenter",aEvent.target.nodeName);
+        this._showPanel(aEvent.target);
+        break;
+      case "mouseleave":
+        console.log("mouseleave",aEvent.target.nodeName);
+        //this._hidePanel();
+        break;
+      case "mouseout":
+        console.log("mouseout",aEvent.target.nodeName);
         break;
       case "dragstart":
         gDrag.start(this, aEvent);

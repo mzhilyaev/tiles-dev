@@ -17,11 +17,11 @@
             xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             title="&newtab.pageTitle;">
 
-  <xul:panel id="thepanel" type="arrow">
-    <xul:hbox align="start">
-      <xul:vbox>
+  <xul:panel id="thepanel" type="arrow" style="border: 1px solid red">
+    <xul:hbox align="start" id="OOOOOOOOOO">
+      <xul:vbox id="AAAAAAAAAAAAAAA">
         <xul:description value="You have 6 new messages."/>
-        <xul:hbox>
+        <xul:hbox id="BBBBBBBBBBBBBBBB">
           <xul:button label="Read Mail"/>
           <xul:button label="New Message"/>
         </xul:hbox>

@@ -16,6 +16,7 @@ function Site(aNode, aLink) {
 
   this._render();
   this._addEventHandlers();
+  this._enterCount = 0;
 }
 
 Site.prototype = {
@@ -166,6 +167,10 @@ Site.prototype = {
     this._node.addEventListener("mouseout", this, false);
     this._node.addEventListener("mouseover", this, false);
 
+    let panel = document.getElementById("thepanel");
+    panel.addEventListener("mouseover", this, false);
+    panel.addEventListener("mouseout", this, false);
+
     let controls = this.node.querySelectorAll(".newtab-control");
     for (let i = 0; i < controls.length; i++)
       controls[i].addEventListener("click", this, false);
@@ -189,9 +194,11 @@ Site.prototype = {
    */
   _showPanel: function Site_showPanel(target) {
     let panel = document.getElementById("thepanel");
-    this._panelOn = true;
-    console.log("showPabel");
-    panel.openPopup(target,"bottomleft","20","20");
+    if (!this._panelOn) {
+      console.log("showPabel");
+      panel.openPopup(target);
+      this._panelOn = true;
+    }
   },
 
   /**
@@ -199,8 +206,14 @@ Site.prototype = {
    */
   _hidePanel: function Hide_showPanel() {
     let panel = document.getElementById("thepanel");
-    console.log("hidePabel");
-    panel.hidePopup();
+    console.log("IN HIDE eneter count", this._enterCount);
+    window.setTimeout(function () {
+      if (this._enterCount == 0) {
+        console.log("hidePabel");
+        panel.hidePopup();
+      }
+    }.bind(this), 10);
+    //panel.style.opacity = 0.6;
     this._panelOn = false;
   },
 
@@ -221,20 +234,27 @@ Site.prototype = {
         }
         break;
       case "mouseover":
-        console.log("mouseover",aEvent.target.nodeName);
+        console.log("mouseover",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
         //this._node.removeEventListener("mouseover", this, false);
         //this._speculativeConnect();
         break;
       case "mouseenter":
-        console.log("mouseenter",aEvent.target.nodeName);
+        this._enterCount++;
+        console.log("mouseenter",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
         this._showPanel(aEvent.target);
         break;
       case "mouseleave":
-        console.log("mouseleave",aEvent.target.nodeName);
-        //this._hidePanel();
+        this._enterCount--;
+        console.log("mouseleave",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
+        this._hidePanel();
+        /*
+        if (aEvent.relatedTarget && !aEvent.relatedTarget.nodeName.startsWith("xul:")) {
+          this._hidePanel();
+        }
+        */
         break;
       case "mouseout":
-        console.log("mouseout",aEvent.target.nodeName);
+        console.log("mouseout",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
         break;
       case "dragstart":
         gDrag.start(this, aEvent);

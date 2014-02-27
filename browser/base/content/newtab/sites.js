@@ -16,7 +16,8 @@ function Site(aNode, aLink) {
 
   this._render();
   this._addEventHandlers();
-  this._enterCount = 0;
+
+  this._panel = document.getElementById("thepanel");
 }
 
 Site.prototype = {
@@ -164,20 +165,11 @@ Site.prototype = {
     // Register drag-and-drop event handlers.
     this._node.addEventListener("dragstart", this, false);
     this._node.addEventListener("dragend", this, false);
-    this._node.addEventListener("mouseout", this, false);
     this._node.addEventListener("mouseover", this, false);
-
-    let panel = document.getElementById("thepanel");
-    panel.addEventListener("mouseover", this, false);
-    panel.addEventListener("mouseout", this, false);
 
     let controls = this.node.querySelectorAll(".newtab-control");
     for (let i = 0; i < controls.length; i++)
       controls[i].addEventListener("click", this, false);
-
-    let sponsored = this._querySelector(".newtab-control-sponsored");
-    sponsored.addEventListener("mouseenter", this, false);
-    sponsored.addEventListener("mouseleave", this, false);
   },
 
   /**
@@ -192,35 +184,32 @@ Site.prototype = {
   /**
    * show the panel
    */
-  _showPanel: function Site_showPanel(target) {
-    let panel = document.getElementById("thepanel");
-    if (!this._panelOn) {
-      console.log("showPabel");
-      panel.openPopup(target);
-      this._panelOn = true;
+  _showPanel: function Site_showPanel(target, persist) {
+    console.log("showPanel", this._panel.state);
+    if (this._panel.state == "closed") {
+      this._panel.setAttribute("persist", persist);
+      this._panel.openPopup(target, "bottomcenter topleft");
     }
   },
 
   /**
    * show the panel
    */
-  _hidePanel: function Hide_showPanel() {
-    let panel = document.getElementById("thepanel");
-    console.log("IN HIDE eneter count", this._enterCount);
-    window.setTimeout(function () {
-      if (this._enterCount == 0) {
-        console.log("hidePabel");
-        panel.hidePopup();
-      }
-    }.bind(this), 10);
-    //panel.style.opacity = 0.6;
-    this._panelOn = false;
+  _hidePanel: function Hide_hidePanel() {
+    console.log("hidePanel", this._panel.state);
+    this._panel.hidePopup();
+    this._panel.removeAttribute("persist");
   },
 
   /**
    * Handles all site events.
    */
   handleEvent: function Site_handleEvent(aEvent) {
+    function dumpEvent() {
+      function $(node) [node.nodeName, node.id, node.className];
+      console.log(aEvent.type, $(aEvent.target), aEvent.relatedTarget ? $(aEvent.relatedTarget) : "no related");
+    }
+
     switch (aEvent.type) {
       case "click":
         if (!aEvent.target.classList.contains("newtab-control-sponsored")) {
@@ -234,27 +223,24 @@ Site.prototype = {
         }
         break;
       case "mouseover":
-        console.log("mouseover",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
-        //this._node.removeEventListener("mouseover", this, false);
+        dumpEvent();
+        this._node.removeEventListener("mouseover", this, false);
         //this._speculativeConnect();
-        break;
-      case "mouseenter":
-        this._enterCount++;
-        console.log("mouseenter",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
-        this._showPanel(aEvent.target);
-        break;
-      case "mouseleave":
-        this._enterCount--;
-        console.log("mouseleave",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
-        this._hidePanel();
-        /*
-        if (aEvent.relatedTarget && !aEvent.relatedTarget.nodeName.startsWith("xul:")) {
-          this._hidePanel();
+
+        let sponsored = this._querySelector(".newtab-control-sponsored");
+        sponsored.addEventListener("mouseover", this, false);
+        sponsored.addEventListener("mouseout", this, false);
+
+        if (aEvent.target == sponsored) {
+          this._showPanel(aEvent.target, false);
         }
-        */
+
         break;
       case "mouseout":
-        console.log("mouseout",aEvent.target.nodeName,(aEvent.relatedTarget?aEvent.relatedTarget.nodeName + " " + aEvent.relatedTarget.id:null));
+        dumpEvent();
+        if (this._panel.getAttribute("persist") == "false" && aEvent.relatedTarget != this._panel) {
+          this._hidePanel();
+        }
         break;
       case "dragstart":
         gDrag.start(this, aEvent);

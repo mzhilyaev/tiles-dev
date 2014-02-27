@@ -197,10 +197,16 @@ input[type=button] {
 }
 
 .newtab-control.newtab-control-sponsored {
-  top: auto;
   bottom: 4px;
+  height: 16px;
+  opacity: 1;
+  top: auto;
+  width: 16px;
 }
 
+#thepanel[persist="false"] {
+  pointer-events: none;
+}
 
 /* DRAG & DROP */
 
